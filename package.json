@@ -1,0 +1,35 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "koa and sequelize blog backend",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
+  },
+  "keywords": [
+    "koa",
+    "sequelize"
+  ],
+  "author": "youting",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-router": "^7.4.0",
+    "koa2-cors": "^2.0.6",
+    "mysql2": "^2.0.0",
+    "sequelize": "^5.21.2"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.52",
+    "@types/koa-router": "^7.0.42",
+    "@types/koa2-cors": "^2.0.1",
+    "@types/sequelize": "^4.28.6",
+    "nodemon": "^1.19.4",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2"
+  }
+}

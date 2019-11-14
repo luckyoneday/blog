@@ -1,2 +1,3 @@
 # blog
-koa and react blog
+
+koa and sequelize blog backend
