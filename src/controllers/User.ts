@@ -1,9 +1,9 @@
-import { Context } from 'koa'
+import { RouterContext } from 'koa-router'
 import User from '../service/User'
 
 export default class UserController {
 
-  private static _hasUsedName = async (ctx: Context) => {
+  private static _hasUsedName = async (ctx: RouterContext) => {
     const userName = ctx.request.body.userName
 
     try {
@@ -19,7 +19,7 @@ export default class UserController {
     }
   }
 
-  public static createUser = async (ctx: Context) => {
+  public static createUser = async (ctx: RouterContext) => {
     const userName = ctx.request.body.userName
     const passWord = ctx.request.body.passWord
 
@@ -59,7 +59,7 @@ export default class UserController {
     }
   }
 
-  public static validatePassword = async (ctx: Context) => {
+  public static validatePassword = async (ctx: RouterContext) => {
     const userName = ctx.request.body.userName
     const passWord = ctx.request.body.passWord
 
