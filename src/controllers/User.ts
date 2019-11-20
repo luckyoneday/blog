@@ -1,31 +1,27 @@
 import { RouterContext } from 'koa-router'
+import * as Crypto from 'crypto'
 import User from '../service/User'
 
 export default class UserController {
 
-  private static _hasUsedName = async (ctx: RouterContext) => {
-    const userName = ctx.request.body.userName
+  private static _hasUsedName = async (userName: string) => {
 
     try {
       const findOne = await User.getOneUserByUserName({ userName })
-      if (findOne) {
-        return true
-      } else {
-        return false
-      }
+      return findOne || null
     } catch (e) {
       console.log('查询失败', e)
-      return false
+      return null
     }
   }
 
-  public static createUser = async (ctx: RouterContext) => {
+  public static signUp = async (ctx: RouterContext) => {
     const userName = ctx.request.body.userName
-    const passWord = ctx.request.body.passWord
+    const passWord = Crypto.createHash('md5').update(ctx.request.body.passWord).digest('hex')
 
     try {
-      const hasOne = await UserController._hasUsedName(ctx)
-      if (hasOne) {
+      const findOne = await UserController._hasUsedName(userName)
+      if (findOne !== null) {
         ctx.response.status = 200
         ctx.body = {
           success: false,
@@ -59,35 +55,5 @@ export default class UserController {
     }
   }
 
-  public static validatePassword = async (ctx: RouterContext) => {
-    const userName = ctx.request.body.userName
-    const passWord = ctx.request.body.passWord
 
-    try {
-      const hasOne = await UserController._hasUsedName(ctx)
-      ctx.response.status = 200
-      if (hasOne) {
-        const findOne = await User.getOneUserByUserName({ userName })
-        console.log(findOne)
-        const finPassWord = findOne && findOne.get('passWord')
-        if (finPassWord === passWord) {
-          ctx.body = {
-            success: true,
-            message: '登录成功'
-          }
-        }
-      } else {
-        ctx.body = {
-          success: false,
-          message: '该用户名不存在'
-        }
-      }
-    } catch (e) {
-      ctx.response.status = 500
-      ctx.body = {
-        success: false,
-        message: '创建失败, ' + e
-      }
-    }
-  }
 }

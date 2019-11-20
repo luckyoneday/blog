@@ -1,6 +1,12 @@
 import * as koa from 'koa'
 import * as cors from 'koa2-cors'
 import * as bodyParser from 'koa-bodyparser'
+import * as session from 'koa-session'
+import * as redisStore from 'koa-redis'
+import { login } from './middleware/login'
+import { logout } from './middleware/logout'
+import { validateLogin } from './middleware/validateLogin'
+import { cookieSignedKey, cookieConfig } from './config'
 import routes from './routes/index'
 
 const app = new koa()
@@ -17,10 +23,18 @@ app.use(cors({
 
 app.use(bodyParser())
 
+app.keys = cookieSignedKey
+const store = redisStore({})
+app.use(session({ ...cookieConfig, store }, app))
+
 app.use(async (ctx, next) => {
   console.log(`${ctx.request.path} : ${ctx.request.method}`)
   await next()
 })
+
+app.use(login)
+app.use(validateLogin)
+app.use(logout)
 
 app.use(routes.routes())
 
