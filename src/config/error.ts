@@ -1,3 +1,1 @@
-export const ERROR_INFORMATION = {
-
-}
+export const ERROR_INFORMATION = {}

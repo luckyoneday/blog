@@ -1,7 +1,7 @@
 import { User } from '../models/User'
 
 export default class {
-  public static async createUser(data: { userName: string, passWord: string }) {
+  public static async createUser(data: { userName: string; passWord: string }) {
     return await User.create({
       userName: data.userName,
       passWord: data.passWord
