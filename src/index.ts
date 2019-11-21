@@ -3,9 +3,8 @@ import * as cors from "koa2-cors"
 import * as bodyParser from "koa-bodyparser"
 import * as session from "koa-session"
 import * as redisStore from "koa-redis"
-import { login } from "./middleware/login"
-import { logout } from "./middleware/logout"
 import { validateLogin } from "./middleware/validateLogin"
+import { refreshSession } from "./middleware/refreshSession"
 import { cookieSignedKey, cookieConfig } from "./config"
 import routes from "./routes/index"
 
@@ -34,9 +33,8 @@ app.use(async (ctx, next) => {
   await next()
 })
 
-app.use(login)
 app.use(validateLogin)
-app.use(logout)
+app.use(refreshSession)
 
 app.use(routes.routes())
 
