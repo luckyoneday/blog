@@ -3,6 +3,7 @@ import * as cors from "koa2-cors"
 import * as bodyParser from "koa-bodyparser"
 import * as session from "koa-session"
 import * as redisStore from "koa-redis"
+import * as logger from "koa-logger"
 import { validateLogin } from "./middleware/validateLogin"
 import { refreshSession } from "./middleware/refreshSession"
 import { cookieSignedKey, cookieConfig } from "./config"
@@ -23,6 +24,7 @@ app.use(
 )
 
 app.use(bodyParser())
+app.use(logger())
 
 app.keys = cookieSignedKey
 const store = redisStore({})

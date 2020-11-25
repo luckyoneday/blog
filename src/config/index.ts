@@ -11,7 +11,7 @@ export const cookieConfig = {
   key: "koa:sessionId",
   domain: "localhost",
   path: "/",
-  maxAge: 600000,
+  maxAge: 8640000,
   httpOnly: true,
   signed: true
 }

@@ -1,5 +1,6 @@
 import * as Router from "koa-router"
 import * as Crypto from "crypto"
+import { HTTP_STATUS_CODE,NORMAL_STATUS_CODE } from '../config/code'
 import User from "../service/User"
 
 export default class UserController {
@@ -22,8 +23,9 @@ export default class UserController {
     try {
       const findOne = await UserController._hasUsedName(userName)
       if (findOne !== null) {
-        ctx.response.status = 200
+        ctx.response.status = HTTP_STATUS_CODE.OK
         ctx.body = {
+          code: NORMAL_STATUS_CODE.PARAM_ERROR,
           success: false,
           message: "该用户名已存在"
         }
@@ -32,23 +34,26 @@ export default class UserController {
         try {
           const create = await User.createUser(createData)
           if (create) {
-            ctx.response.status = 200
+            ctx.response.status = HTTP_STATUS_CODE.OK
             ctx.body = {
+              code: NORMAL_STATUS_CODE.SUCCESS,
               success: true,
               message: "创建成功"
             }
           }
         } catch (e) {
-          ctx.response.status = 500
+          ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
           ctx.body = {
+            code: NORMAL_STATUS_CODE.SQL_INSERT_ERROR,
             success: false,
             message: "创建失败, " + e
           }
         }
       }
     } catch (e) {
-      ctx.response.status = 500
+      ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
       ctx.body = {
+        code: NORMAL_STATUS_CODE.SQL_QUERY_ERROR,
         success: false,
         message: "创建失败, " + e
       }
@@ -64,7 +69,7 @@ export default class UserController {
     try {
       const findOne = await UserController._hasUsedName(userName)
 
-      ctx.response.status = 200
+      ctx.response.status = HTTP_STATUS_CODE.OK
       if (findOne !== null) {
         const finPassWord = findOne.get("passWord")
         if (finPassWord === passWord) {
@@ -76,24 +81,28 @@ export default class UserController {
           }
 
           ctx.body = {
+            code: NORMAL_STATUS_CODE.SUCCESS,
             success: true,
             message: "登录成功"
           }
         } else {
           ctx.body = {
+            code: NORMAL_STATUS_CODE.UNAUTHORIZED,
             success: false,
             message: "密码错误"
           }
         }
       } else {
         ctx.body = {
+          code: NORMAL_STATUS_CODE.UNAUTHORIZED,
           success: false,
           message: "该用户名不存在"
         }
       }
     } catch (e) {
-      ctx.response.status = 500
+      ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
       ctx.body = {
+        code: NORMAL_STATUS_CODE.SQL_QUERY_ERROR,
         success: false,
         message: "登录失败, " + e
       }
@@ -101,10 +110,11 @@ export default class UserController {
   }
 
   public static logout = async (ctx: Router.RouterContext) => {
-    ctx.response.status = 200
+    ctx.response.status = HTTP_STATUS_CODE.OK
     if (ctx.session && ctx.session.isLogin) {
       ctx.session = null
       ctx.body = {
+        code: NORMAL_STATUS_CODE.SUCCESS,
         success: true,
         message: "退出登录成功"
       }
@@ -113,18 +123,19 @@ export default class UserController {
 
   public static getUserInfo = async (ctx: Router.RouterContext) => {
     const session = ctx.session || {}
-    if (session.userName) {
-      ctx.response.status = 200
+    if (session.isLogin) {
+      ctx.response.status = HTTP_STATUS_CODE.OK,
       ctx.body = {
+        code: NORMAL_STATUS_CODE.SUCCESS,
         success: true,
         data: session,
         message: "success"
       }
     } else {
-      ctx.response.status = 401
+      ctx.response.status = HTTP_STATUS_CODE.UNAUTHORIZED,
       ctx.body = {
+        code: NORMAL_STATUS_CODE.UNAUTHORIZED,
         success: false,
-        code: 511,
         message: "清先登录"
       }
     }
