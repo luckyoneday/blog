@@ -14,7 +14,7 @@ const PORT = 2333
 
 app.use(
   cors({
-    origin: () => "http://localhost:8080",
+    origin: "http://localhost:4555",
     exposeHeaders: ["WWW-Authenticate", "Server-Authorization"],
     maxAge: 5,
     credentials: true,

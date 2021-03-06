@@ -13,10 +13,9 @@ export default class {
   }
 
   public static async getOneUserByUserName(data: { userName: string }) {
-    const userName = data.userName
     return await User.findOne({
       where: {
-        userName
+        userName: data.userName
       }
     })
   }

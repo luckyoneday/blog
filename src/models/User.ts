@@ -9,16 +9,19 @@ User.init(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      unique: true
+      unique: true,
+      comment: '用户唯一id'
     },
     userName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      comment: '用户唯一用户名'
     },
     passWord: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      comment: '用户密码'
     }
   },
   {

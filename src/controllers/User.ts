@@ -1,10 +1,11 @@
 import * as Router from "koa-router"
 import * as Crypto from "crypto"
-import { HTTP_STATUS_CODE,NORMAL_STATUS_CODE } from '../config/code'
+import { successMsg, unAuthorizedMsg, paramErrorMsg, sqlErrorMsg } from "../config/error"
+import { checkMustParams } from "../utils/params"
 import User from "../service/User"
 
 export default class UserController {
-  private static _hasUsedName = async (userName: string) => {
+  public static _hasUsedName = async (userName: string) => {
     try {
       const findOne = await User.getOneUserByUserName({ userName })
       return findOne || null
@@ -15,61 +16,46 @@ export default class UserController {
   }
 
   public static signUp = async (ctx: Router.RouterContext) => {
+    const paramError = checkMustParams(ctx.request.body, ["userName", "passWord"])
+    if (paramError.length) {
+      return paramErrorMsg(ctx, paramError)
+    }
+
     const userName = ctx.request.body.userName
-    const passWord = Crypto.createHash("md5")
-      .update(ctx.request.body.passWord)
-      .digest("hex")
+    const passWord = Crypto.createHash("md5").update(ctx.request.body.passWord).digest("hex")
 
     try {
       const findOne = await UserController._hasUsedName(userName)
       if (findOne !== null) {
-        ctx.response.status = HTTP_STATUS_CODE.OK
-        ctx.body = {
-          code: NORMAL_STATUS_CODE.PARAM_ERROR,
-          success: false,
-          message: "该用户名已存在"
-        }
+        paramErrorMsg(ctx, "该用户名已存在")
       } else {
         const createData = { userName, passWord }
         try {
           const create = await User.createUser(createData)
           if (create) {
-            ctx.response.status = HTTP_STATUS_CODE.OK
-            ctx.body = {
-              code: NORMAL_STATUS_CODE.SUCCESS,
-              success: true,
-              message: "创建成功"
-            }
+            successMsg(ctx)
           }
         } catch (e) {
-          ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
-          ctx.body = {
-            code: NORMAL_STATUS_CODE.SQL_INSERT_ERROR,
-            success: false,
-            message: "创建失败, " + e
-          }
+          sqlErrorMsg(ctx, "创建失败, " + e)
         }
       }
     } catch (e) {
-      ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
-      ctx.body = {
-        code: NORMAL_STATUS_CODE.SQL_QUERY_ERROR,
-        success: false,
-        message: "创建失败, " + e
-      }
+      sqlErrorMsg(ctx, "创建失败, " + e)
     }
   }
 
   public static login = async (ctx: Router.RouterContext) => {
+    const paramError = checkMustParams(ctx.request.body, ["userName", "passWord"])
+    if (paramError.length) {
+      return paramErrorMsg(ctx, paramError)
+    }
+
     const userName = ctx.request.body.userName
-    const passWord = Crypto.createHash("md5")
-      .update(ctx.request.body.passWord)
-      .digest("hex")
+    const passWord = Crypto.createHash("md5").update(ctx.request.body.passWord).digest("hex")
 
     try {
       const findOne = await UserController._hasUsedName(userName)
 
-      ctx.response.status = HTTP_STATUS_CODE.OK
       if (findOne !== null) {
         const finPassWord = findOne.get("passWord")
         if (finPassWord === passWord) {
@@ -80,64 +66,40 @@ export default class UserController {
             userId: findOne.get("userId")
           }
 
-          ctx.body = {
-            code: NORMAL_STATUS_CODE.SUCCESS,
-            success: true,
-            message: "登录成功"
-          }
+          successMsg(ctx, undefined, "登录成功")
         } else {
-          ctx.body = {
-            code: NORMAL_STATUS_CODE.UNAUTHORIZED,
-            success: false,
-            message: "密码错误"
-          }
+          paramErrorMsg(ctx, "密码错误")
         }
       } else {
-        ctx.body = {
-          code: NORMAL_STATUS_CODE.UNAUTHORIZED,
-          success: false,
-          message: "该用户名不存在"
-        }
+        paramErrorMsg(ctx, "该用户名不存在")
       }
     } catch (e) {
-      ctx.response.status = HTTP_STATUS_CODE.INTERNAL_ERROR
-      ctx.body = {
-        code: NORMAL_STATUS_CODE.SQL_QUERY_ERROR,
-        success: false,
-        message: "登录失败, " + e
-      }
+      sqlErrorMsg(ctx, "登录失败" + e)
     }
   }
 
   public static logout = async (ctx: Router.RouterContext) => {
-    ctx.response.status = HTTP_STATUS_CODE.OK
     if (ctx.session && ctx.session.isLogin) {
       ctx.session = null
-      ctx.body = {
-        code: NORMAL_STATUS_CODE.SUCCESS,
-        success: true,
-        message: "退出登录成功"
-      }
+      successMsg(ctx)
     }
   }
 
   public static getUserInfo = async (ctx: Router.RouterContext) => {
     const session = ctx.session || {}
     if (session.isLogin) {
-      ctx.response.status = HTTP_STATUS_CODE.OK,
-      ctx.body = {
-        code: NORMAL_STATUS_CODE.SUCCESS,
-        success: true,
-        data: session,
-        message: "success"
-      }
+      successMsg(ctx, { userName: session.userName })
     } else {
-      ctx.response.status = HTTP_STATUS_CODE.UNAUTHORIZED,
-      ctx.body = {
-        code: NORMAL_STATUS_CODE.UNAUTHORIZED,
-        success: false,
-        message: "清先登录"
-      }
+      unAuthorizedMsg(ctx)
+    }
+  }
+
+  public static verifyLogin = async (ctx: Router.RouterContext) => {
+    const session = ctx.session || {}
+    if (session.isLogin) {
+      successMsg(ctx)
+    } else {
+      unAuthorizedMsg(ctx)
     }
   }
 }
