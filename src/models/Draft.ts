@@ -10,40 +10,45 @@ Draft.init(
       primaryKey: true,
       unique: true,
       autoIncrement: true,
-      comment: '草稿Id，唯一标识'
+      comment: "草稿Id，唯一标识"
     },
     draftHash: {
       type: DataTypes.STRING,
       unique: true,
-      comment: '草稿hash，唯一标识'
+      allowNull: false,
+      comment: "草稿hash，唯一标识"
+    },
+    articleHash: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+      comment: "文章hash，唯一标识"
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
-      comment: '用户唯一id'
+      comment: "用户唯一id"
     },
     userName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      comment: '用户唯一用户名'
+      comment: "用户唯一用户名"
     },
     title: {
       type: DataTypes.STRING,
       allowNull: true,
-      comment: '草稿的标题'
+      comment: "草稿的标题"
     },
     content: {
       type: DataTypes.TEXT,
       allowNull: true,
-      comment: '草稿的内容'
+      comment: "草稿的内容"
     },
     isDelete: {
       type: DataTypes.ENUM,
-      values: ['0', '1'],
+      values: ["0", "1"],
       allowNull: false,
-      comment: '草稿是否被删除'
+      comment: "草稿是否被删除"
     }
   },
   {
@@ -53,4 +58,4 @@ Draft.init(
   }
 )
 
-Draft.sync()
+Draft.sync({ alter: true }).then(() => console.log("草稿表连接成功"))

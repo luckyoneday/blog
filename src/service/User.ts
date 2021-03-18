@@ -1,22 +1,28 @@
-import { User } from '../models/User'
+import { User } from "../models/User"
 
 export default class {
-  public static async createUser(data: { userName: string; passWord: string }) {
-    return await User.create({
+  public static createUser(data: { userName: string; passWord: string }) {
+    return User.create({
       userName: data.userName,
       passWord: data.passWord
+    }).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async getAllUser() {
-    return await User.findAll()
+  public static getAllUser() {
+    return User.findAll().catch(e => {
+      console.log(e)
+    })
   }
 
-  public static async getOneUserByUserName(data: { userName: string }) {
-    return await User.findOne({
+  public static getOneUserByUserName(data: { userName: string }) {
+    return User.findOne({
       where: {
         userName: data.userName
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 }

@@ -1,6 +1,7 @@
 import * as Router from "koa-router"
 import UserController from "../controllers/User"
 import DraftController from '../controllers/Draft'
+import ArticleController from '../controllers/Article'
 
 const router = new Router()
 
@@ -19,10 +20,10 @@ router.get('/draft/detail', DraftController.getDraftDetail)
 router.get('/draft/list', DraftController.getDraftList)
 
 // 文章相关
-router.post("/article/create",)
-router.post('/article/update',)
-router.post('/article/delete',)
-router.get('/article',)
-router.get('/article/list',)
+router.post("/article/create", ArticleController.createArticle)
+router.post('/article/update', ArticleController.updateArticle)
+router.post('/article/delete', ArticleController.deleteArticle)
+router.get('/article/detail', ArticleController.getArticleDetail)
+router.get('/article/list', ArticleController.getArticleList)
 
 export default router

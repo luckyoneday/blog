@@ -1,55 +1,82 @@
-import { Article } from '../models/Article'
+import { Article } from "../models/Article"
 
 export default class {
-  public static async createArticle(data: { title: string; content: string; userId: number, userName: string, cover: string, isPublic: string, articleHash: string }) {
-    return await Article.create({
+  public static createArticle(data: {
+    title: string
+    content: string
+    userId: number
+    userName: string
+    cover: string
+    visibleStatus: string
+    articleHash: string
+  }) {
+    return Article.create({
       articleHash: data.articleHash,
       userId: data.userId,
       userName: data.userName,
       title: data.title,
       content: data.content,
       cover: data.cover,
-      isPublic: data.isPublic,
-      isDelete: '0'
+      visibleStatus: data.visibleStatus,
+      isDelete: "0"
+    }).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async updateArticle(data: { articleHash: string, title: string; content: string; cover: string; isDelete: string, isPublic: string }) {
-    return await Article.update({
-      title: data.title,
-      content: data.content,
-      cover: data.cover,
-      isPublic: data.isPublic,
-      isDelete: data.isDelete
-    }, {
-      where: { articleHash: data.articleHash}
-    })
-  }
-
-  public static async getAllArticle() {
-    return await Article.findOne({
-      where: {
-        isPublic: '1',
-        isDelete: '0'
+  public static updateArticle(data: {
+    articleHash: string
+    title: string
+    content: string
+    cover: string
+    isDelete: string
+    visibleStatus: string
+  }) {
+    return Article.update(
+      {
+        title: data.title,
+        content: data.content,
+        cover: data.cover,
+        visibleStatus: data.visibleStatus,
+        isDelete: data.isDelete
+      },
+      {
+        where: { articleHash: data.articleHash }
       }
+    ).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async getAllArticleByUserId(data: { userId: string }) {
-    return await Article.findOne({
+  public static getAllArticle() {
+    return Article.findAll({
       where: {
-        userId: data.userId,
-        isDelete: '0'
+        visibleStatus: "1",
+        isDelete: "0"
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async getArticleDetailByArticleHash(data: { ArticleHash: string }) {
-    return await Article.findOne({
+  public static getAllArticleByUserName(data: { userName: string }) {
+    return Article.findAll({
       where: {
-        ArticleHash: data.ArticleHash,
+        userName: data.userName,
+        isDelete: "0"
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 
+  public static getDetailByArticleHash(data: { articleHash: string }) {
+    return Article.findOne({
+      where: {
+        articleHash: data.articleHash
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+  }
 }

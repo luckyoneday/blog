@@ -15,18 +15,17 @@ Article.init(
     articleHash: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
       comment: '文章hash，唯一标识'
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
       comment: '用户唯一id'
     },
     userName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       comment: '用户唯一用户名'
     },
     title: {
@@ -44,10 +43,10 @@ Article.init(
       allowNull: true,
       comment: '文章封面图'
     },
-    isPublic: {
+    visibleStatus: {
       type: DataTypes.ENUM,
       values: ['0', '1'],
-      comment: '文章是否对外可见'
+      comment: '文章可见性'
     },
     isDelete: {
       type: DataTypes.ENUM,
@@ -62,4 +61,4 @@ Article.init(
   }
 )
 
-Article.sync()
+Article.sync({ alter: true }).then(() => console.log("文章表连接成功"))

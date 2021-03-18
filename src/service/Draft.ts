@@ -1,56 +1,87 @@
 import { Draft } from "../models/Draft"
 
 export default class {
-  public static async createDraft(data: {
+  public static createDraft(data: {
     title: string
     content: string
     userName: string
     userId: number
     draftHash: string
+    articleHash?: string
   }) {
-    return await Draft.create({
+    return Draft.create({
       draftHash: data.draftHash,
+      articleHash: data.articleHash,
       userName: data.userName,
       userId: data.userId,
       title: data.title,
       content: data.content,
-      isDelete: "0",
-      draftId: 1
+      isDelete: "0"
+    }).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async updateDraft(data: {
+  public static updateDraft(data: {
     draftHash: string
+    articleHash?: string
     title: string
     content: string
     isDelete: string
   }) {
-    return await Draft.update(
+    return Draft.update(
       {
         title: data.title,
         content: data.content,
-        isDelete: data.isDelete
+        isDelete: data.isDelete,
+        articleHash: data.articleHash
       },
       {
         where: { draftHash: data.draftHash }
       }
-    )
+    ).catch(e => {
+      console.log(e)
+    })
   }
 
-  public static async getAllDraftByUserName(data: { userName: string }) {
-    return await Draft.findAll({
+  public static deleteDraft(data: { draftHash: string }) {
+    return Draft.destroy({
+      where: {
+        draftHash: data.draftHash
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  public static getAllDraftByUserName(data: { userName: string }) {
+    return Draft.findAll({
       where: {
         userName: data.userName,
         isDelete: "0"
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 
-  public static async getDetailByDraftHash(data: { draftHash: string }) {
-    return await Draft.findOne({
+  public static getDetailByArticleHash(data: { articleHash: string }) {
+    return Draft.findOne({
+      where: {
+        articleHash: data.articleHash
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  public static getDetailByDraftHash(data: { draftHash: string }) {
+    return Draft.findOne({
       where: {
         draftHash: data.draftHash
       }
+    }).catch(e => {
+      console.log(e)
     })
   }
 }

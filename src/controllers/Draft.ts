@@ -12,13 +12,19 @@ export default class DraftController {
     }
 
     const session = ctx.session || {}
-    const userName = session.userName
-    const userId = session.userId
-    const { title, content } = ctx.request.body
+    const { userName, userId } = session
+    const { title, content, articleHash = null } = ctx.request.body
+    let draftHash = ""
 
     try {
-      const draftHash = v4()
-      await Draft.createDraft({ userName, userId, title, content, draftHash })
+      if (articleHash) {
+        const findOne = await Draft.getDetailByArticleHash({ articleHash })
+        if (findOne && findOne.get('isDelete') === '0') {
+          draftHash = findOne.get("draftHash") as string
+        } else draftHash = v4()
+      } else draftHash = v4()
+
+      await Draft.createDraft({ userName, userId, title, content, draftHash, articleHash })
       successMsg(ctx, { draftHash })
     } catch (e) {
       sqlErrorMsg(ctx, "创建草稿失败" + e)
@@ -30,10 +36,16 @@ export default class DraftController {
     if (paramError.length) {
       return paramErrorMsg(ctx, paramError)
     }
-    const { title, content, draftHash } = ctx.request.body
+    const { title, content, draftHash, articleHash = null } = ctx.request.body
 
     try {
-      await Draft.updateDraft({ title, content, draftHash, isDelete: "0" })
+      const findOne = await Draft.getDetailByDraftHash({ draftHash })
+
+      if (!(findOne && findOne.get("isDelete") === "0")) {
+        return paramErrorMsg(ctx, "该草稿不存在")
+      }
+
+      await Draft.updateDraft({ title, content, draftHash, isDelete: "0", articleHash })
       successMsg(ctx, { draftHash })
     } catch (e) {
       sqlErrorMsg(ctx, "更新失败" + e)
