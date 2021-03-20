@@ -19,8 +19,18 @@ export default class DraftController {
     try {
       if (articleHash) {
         const findOne = await Draft.getDetailByArticleHash({ articleHash })
-        if (findOne && findOne.get('isDelete') === '0') {
+        if (findOne && findOne.get("isDelete") === "0") {
           draftHash = findOne.get("draftHash") as string
+          console.log(draftHash, "000000-----")
+
+          await Draft.updateDraft({
+            draftHash,
+            articleHash,
+            title: findOne.get("title") as string,
+            content: findOne.get("content") as string,
+            isDelete: "0"
+          })
+          return successMsg(ctx, { draftHash })
         } else draftHash = v4()
       } else draftHash = v4()
 

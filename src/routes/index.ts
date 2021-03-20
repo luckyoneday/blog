@@ -25,5 +25,6 @@ router.post('/article/update', ArticleController.updateArticle)
 router.post('/article/delete', ArticleController.deleteArticle)
 router.get('/article/detail', ArticleController.getArticleDetail)
 router.get('/article/list', ArticleController.getArticleList)
+router.get('/article/allList', ArticleController.getAllList)
 
 export default router

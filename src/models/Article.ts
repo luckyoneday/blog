@@ -51,6 +51,7 @@ Article.init(
     isDelete: {
       type: DataTypes.ENUM,
       values: ['0', '1'],
+      allowNull: false,
       comment: '文章是否被删除'
     }
   },

@@ -86,7 +86,7 @@ export default class ArticleController {
   }
 
   public static deleteArticle = async (ctx: Router.RouterContext) => {
-    const paramError = checkMustParams(ctx.request.body, ["ArticleHash"])
+    const paramError = checkMustParams(ctx.request.body, ["articleHash"])
     if (paramError.length) {
       return paramErrorMsg(ctx, paramError)
     }
@@ -119,6 +119,16 @@ export default class ArticleController {
 
     try {
       const list = await Article.getAllArticleByUserName({ userName })
+      successMsg(ctx, { list })
+    } catch (e) {
+      sqlErrorMsg(ctx, "")
+    }
+  }
+
+  public static getAllList = async (ctx: Router.RouterContext) => {
+
+    try {
+      const list = await Article.getAllArticle()
       successMsg(ctx, { list })
     } catch (e) {
       sqlErrorMsg(ctx, "")

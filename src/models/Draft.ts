@@ -46,7 +46,7 @@ Draft.init(
     },
     isDelete: {
       type: DataTypes.ENUM,
-      values: ["0", "1"],
+      values: ['0', '1'],
       allowNull: false,
       comment: "草稿是否被删除"
     }
