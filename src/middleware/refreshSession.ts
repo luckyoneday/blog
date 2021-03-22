@@ -1,10 +1,12 @@
 import * as koa from "koa"
 import { unAuthorizedMsg } from '../config/error'
 
-const excludesSet = new Set(["/logout", "/signUp", "/login"])
+const excludesUrl = ["/logout", "/signUp", "/login", "/article/allList", "/article/detail"]
+
 export const refreshSession = async (ctx: koa.Context, next: any) => {
   // 不需要刷新token的接口排除掉
-  if (excludesSet.has(ctx.url)) {
+  const filtered = excludesUrl.filter(t => ctx.url.startsWith(t))
+  if (filtered.length > 0) {
     return await next()
   } else {
     if (ctx.session && ctx.session.isLogin) {
