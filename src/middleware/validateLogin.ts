@@ -1,7 +1,7 @@
 import * as koa from "koa"
 import { unAuthorizedMsg } from "../config/error"
 
-const excludesUrl = ["/login", "/signUp", "/article/allList", "/article/detail"]
+const excludesUrl = ["/api/login", "/api/signUp", "/api/article/allList", "/api/article/detail"]
 
 export const validateLogin = async (ctx: koa.Context, next: any) => {
   // 不需要验证登录的接口排除掉

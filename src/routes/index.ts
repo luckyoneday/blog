@@ -3,7 +3,7 @@ import UserController from "../controllers/User"
 import DraftController from '../controllers/Draft'
 import ArticleController from '../controllers/Article'
 
-const router = new Router()
+const router = new Router({prefix: '/api'})
 
 // 用户相关
 router.post("/signUp", UserController.signUp)
